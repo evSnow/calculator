@@ -1,8 +1,10 @@
 let current=[];
 let sumCurrent=0;
 let sum=0;
+let sumD=0;
 let symbol="_";
 let symbolPre="_";
+let isDecimal=0;
 const num='0123456789';
 const displayCurrent= document.querySelector("#displayCurrent");
 
@@ -51,6 +53,7 @@ function compile(current){
     let string=""
     for(let i=0; i<current.length; i++){
         string=string+current[i];
+        console.log(string);
     }
     return string;
 }
@@ -62,15 +65,27 @@ function display(show){
 const buttons=document.querySelectorAll("button");
 buttons.forEach((button)=>{
     button.addEventListener("click",() =>{
-        if(button.id==="clear"){
+         if(button.id==="clear"){
             current=[];
             sumCurrent=0;
             sum=0;
             symbol="_";
+            isDecimal=0;
             display(sum);
         }
         else if(sum==="n/a"){
             return display("n/a (plese clear)");
+        }
+        else if(button.id==="."){
+            if(isDecimal===0){
+                sumD=sumCurrent+".";
+                display(sumD);
+                isDecimal=1;
+                return;
+            }
+            else{
+                return;
+            }
         }
         else if(isNaN(button.id)){
             if(button.id==="="){ 
@@ -83,6 +98,7 @@ buttons.forEach((button)=>{
                         }
                     console.log(sum);
                     sumCurrent=0;
+                    isDecimal=0;
                     display(sum);
                     symbol="_"
                 }
@@ -95,6 +111,7 @@ buttons.forEach((button)=>{
                     }
                      display(sum);
                      symbolPre=symbol;
+                     isDecimal=0;
                      sumCurrent=0;
                      symbol="_"
                      
@@ -103,6 +120,7 @@ buttons.forEach((button)=>{
             else if(symbol!=="_"){
                 console.log(sumCurrent);
                 sum=operate(sum,sumCurrent,symbol);
+                isDecimal=0;
                 sumCurrent=0;
                 console.log(sum);
                 display(sum);
@@ -117,6 +135,7 @@ buttons.forEach((button)=>{
                     }
                     current=[];
                     display(sum);
+                    isDecimal=0;
                     symbolPre="_";
                 }
                 else{
@@ -127,10 +146,20 @@ buttons.forEach((button)=>{
             }
         }
         else{
-        current.push(button.id)
-        sumCurrent=compile(current);
-        sumCurrent=parseInt(sumCurrent);
-        display(sumCurrent);
+            if(isDecimal===1){
+                current.push(".");
+                current.push(button.id);
+                sumCurrent=compile(current);
+                sumCurrent=parseFloat(sumCurrent);
+                console.log(sumCurrent);
+                display(sumCurrent);
+            }
+            else{
+                current.push(button.id)
+                sumCurrent=compile(current);
+                sumCurrent=parseFloat (sumCurrent);
+                display(sumCurrent);
+            }
         }
        
         //display(current);
